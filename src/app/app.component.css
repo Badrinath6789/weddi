@@ -1,0 +1,150 @@
+
+* {
+  box-sizing: border-box;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 10, 10, 0.65);
+  backdrop-filter: blur(7px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  z-index: 9999;
+}
+
+.invitation-popup {
+  position: relative;
+  width: 100%;
+  max-width: 430px;
+  padding: 38px 25px;
+  text-align: center;
+  background: #fff8ed;
+  border: 2px solid #b58a45;
+  outline: 1px solid #b58a45;
+  outline-offset: -8px;
+  border-radius: 8px;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+  animation: popup 0.7s ease;
+}
+
+.close-btn {
+  position: absolute;
+  right: 18px;
+  top: 12px;
+  background: transparent;
+  border: none;
+  font-size: 27px;
+  color: #8c1828;
+  cursor: pointer;
+}
+
+.floral {
+  font-size: 38px;
+  color: #b58a45;
+}
+
+.subtitle {
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: #8b6b42;
+  margin-top: 15px;
+}
+
+h1 {
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 34px;
+  font-weight: normal;
+  color: #831d2b;
+  margin: 22px 0;
+}
+
+.divider {
+  color: #b58a45;
+  margin: 15px 0;
+}
+
+h2 {
+  font-family: Georgia, serif;
+  font-size: 30px;
+  color: #831d2b;
+  font-weight: normal;
+}
+
+h2 span {
+  color: #bd934d;
+}
+
+.description {
+  font-family: Georgia, serif;
+  font-size: 14px;
+  color: #76614c;
+  line-height: 1.6;
+  margin: 20px 0;
+}
+
+.coming-soon {
+  display: inline-block;
+  border: 1px solid #b58a45;
+  padding: 12px 25px;
+  color: #831d2b;
+  letter-spacing: 4px;
+  font-size: 13px;
+  margin: 10px 0;
+}
+
+.bottom-text {
+  color: #8b6b42;
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 13px;
+  margin-top: 20px;
+}
+
+.bottom-floral {
+  margin-top: 15px;
+}
+
+@keyframes popup {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Mobile responsive */
+@media screen and (max-width: 480px) {
+  .invitation-popup {
+    max-width: 340px;
+    padding: 35px 18px;
+  }
+
+  h1 {
+    font-size: 29px;
+  }
+
+  h2 {
+    font-size: 25px;
+  }
+
+  .subtitle {
+    font-size: 9px;
+    letter-spacing: 2px;
+  }
+
+  .description {
+    font-size: 13px;
+  }
+
+  .coming-soon {
+    font-size: 11px;
+    padding: 10px 18px;
+  }
+}

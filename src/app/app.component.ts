@@ -7,4 +7,10 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'weddi';
+
+  isVisible = true;
+
+  closePopup() {
+    this.isVisible = false;
+  }
 }
