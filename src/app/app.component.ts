@@ -52,7 +52,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit(): void {
     const q = encodeURIComponent(CONFIG.mapQuery);
     this.mapUrl = this.san.bypassSecurityTrustResourceUrl(`https://www.google.com/maps?q=${q}&output=embed`);
-    this.directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${q}`;
+    this.directionsUrl = `https://maps.app.goo.gl/WzFa8iUH2VPwZvQ6A`;
 
     const start = this.weddingDate;
     const end = new Date(start.getTime() + CONFIG.durationHours * 3600 * 1000);
