@@ -1,34 +1,198 @@
+<!-- Reusable SVG symbols -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- 8-petal flower -->
+    <symbol id="flower" viewBox="0 0 100 100">
+      <g transform="translate(50 50)">
+        <g fill="currentColor">
+          <ellipse rx="9" ry="26" cy="-26" />
+          <ellipse rx="9" ry="26" cy="-26" transform="rotate(45)" />
+          <ellipse rx="9" ry="26" cy="-26" transform="rotate(90)" />
+          <ellipse rx="9" ry="26" cy="-26" transform="rotate(135)" />
+          <ellipse rx="9" ry="26" cy="-26" transform="rotate(180)" />
+          <ellipse rx="9" ry="26" cy="-26" transform="rotate(225)" />
+          <ellipse rx="9" ry="26" cy="-26" transform="rotate(270)" />
+          <ellipse rx="9" ry="26" cy="-26" transform="rotate(315)" />
+        </g>
+        <circle r="9" fill="#f5c542" />
+        <circle r="4" fill="#b8860b" />
+      </g>
+    </symbol>
+    <!-- Mandala -->
+    <symbol id="mandala" viewBox="0 0 200 200">
+      <g fill="none" stroke="currentColor" stroke-width="1.2" transform="translate(100 100)">
+        <circle r="95" /><circle r="80" stroke-dasharray="2 5" /><circle r="38" /><circle r="10" />
+        <g id="m-petals">
+          <path d="M0 -38 C 14 -58 14 -78 0 -95 C -14 -78 -14 -58 0 -38Z" />
+          <path d="M0 -38 C 14 -58 14 -78 0 -95 C -14 -78 -14 -58 0 -38Z" transform="rotate(30)" />
+          <path d="M0 -38 C 14 -58 14 -78 0 -95 C -14 -78 -14 -58 0 -38Z" transform="rotate(60)" />
+          <path d="M0 -38 C 14 -58 14 -78 0 -95 C -14 -78 -14 -58 0 -38Z" transform="rotate(90)" />
+          <path d="M0 -38 C 14 -58 14 -78 0 -95 C -14 -78 -14 -58 0 -38Z" transform="rotate(120)" />
+          <path d="M0 -38 C 14 -58 14 -78 0 -95 C -14 -78 -14 -58 0 -38Z" transform="rotate(150)" />
+          <path d="M0 -38 C 14 -58 14 -78 0 -95 C -14 -78 -14 -58 0 -38Z" transform="rotate(180)" />
+          <path d="M0 -38 C 14 -58 14 -78 0 -95 C -14 -78 -14 -58 0 -38Z" transform="rotate(210)" />
+          <path d="M0 -38 C 14 -58 14 -78 0 -95 C -14 -78 -14 -58 0 -38Z" transform="rotate(240)" />
+          <path d="M0 -38 C 14 -58 14 -78 0 -95 C -14 -78 -14 -58 0 -38Z" transform="rotate(270)" />
+          <path d="M0 -38 C 14 -58 14 -78 0 -95 C -14 -78 -14 -58 0 -38Z" transform="rotate(300)" />
+          <path d="M0 -38 C 14 -58 14 -78 0 -95 C -14 -78 -14 -58 0 -38Z" transform="rotate(330)" />
+        </g>
+      </g>
+    </symbol>
+    <!-- Divider -->
+    <symbol id="divider" viewBox="0 0 300 30">
+      <g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+        <path d="M10 15 H125" /><path d="M175 15 H290" />
+        <path d="M125 15 q10 -12 25 0 q15 12 25 0" />
+      </g>
+      <g fill="currentColor"><circle cx="150" cy="15" r="3.5" /><circle cx="10" cy="15" r="2" /><circle cx="290" cy="15" r="2" /></g>
+    </symbol>
+  </defs>
+</svg>
 
-<div class="overlay">
-  <div class="invitation-popup">
+<!-- Background music -->
+<audio #music loop preload="auto" (error)="onMusicError()">
+  <source src="assets/wedding-music.mp3" type="audio/mpeg" />
+</audio>
 
-    <button class="close-btn" aria-label="Close">×</button>
+<!-- Falling petals (always on) -->
+<div class="petals" aria-hidden="true">
+  <svg *ngFor="let p of petals" class="petal" [ngClass]="'h' + p.hue"
+       [style.left.%]="p.left" [style.width.px]="p.size" [style.height.px]="p.size"
+       [style.animationDelay.s]="p.delay" [style.animationDuration.s]="p.dur" [style.--sway]="p.sway + 'px'">
+    <use href="#flower" />
+  </svg>
+</div>
 
-    <div class="floral">❀</div>
+<!-- Music control -->
+<button class="music-btn" *ngIf="opened" (click)="toggleMusic()" [class.on]="playing"
+        [attr.aria-label]="playing ? 'Pause music' : 'Play music'" [title]="musicMissing ? 'Add assets/wedding-music.mp3' : ''">
+  <span *ngIf="!playing">&#9654;</span>
+  <span *ngIf="playing">&#10074;&#10074;</span>
+  <i class="ring"></i>
+</button>
 
-    <p class="subtitle">A BEAUTIFUL JOURNEY BEGINS</p>
+<!-- ============ GRAND WELCOME GATE ============ -->
+<div class="gate" *ngIf="!gateGone" [class.open]="opened">
+  <div class="door left"></div>
+  <div class="door right"></div>
 
-    <h1>Wedding Invitation</h1>
+  <div class="gate-content">
+    <svg class="gate-mandala"><use href="#mandala" /></svg>
+    <div class="corner tl"><svg><use href="#flower" /></svg></div>
+    <div class="corner tr"><svg><use href="#flower" /></svg></div>
+    <div class="corner bl"><svg><use href="#flower" /></svg></div>
+    <div class="corner br"><svg><use href="#flower" /></svg></div>
 
-    <div class="divider">
-      <span>♥</span>
-    </div>
-
-    <h2>Kavya <span>&</span>Sai Shashank</h2>
-
-    <p class="description">
-      Two hearts, one love, one beautiful beginning.
-    </p>
-
-    <div class="coming-soon">
-      <span>COMING SOON</span>
-    </div>
-
-    <p class="bottom-text">
-      Stay tuned for our special day!
-    </p>
-
-    <div class="floral bottom-floral">❀</div>
-
+    <p class="om">&#2384;</p>
+    <p class="telugu">శ్రీరస్తు &nbsp;శుభమస్తు</p>
+    <p class="sub-caps">Srirastu Shubhamastu</p>
+    <svg class="divider"><use href="#divider" /></svg>
+    <p class="welcome">Together with their families</p>
+    <h1 class="gate-names">
+      <span>{{ cfg.groom }}</span>
+      <em>&amp;</em>
+      <span>{{ cfg.bride }}</span>
+    </h1>
+    <p class="welcome small">cordially invite you to celebrate their wedding</p>
+    <button class="enter-btn" (click)="enter()">
+      <span>Enter Invitation</span>
+    </button>
   </div>
 </div>
+
+<!-- ============ INVITATION ============ -->
+<main class="invite" [class.visible]="opened">
+
+  <!-- Hero -->
+  <section class="hero">
+    <svg class="hero-mandala"><use href="#mandala" /></svg>
+    <div class="garland"><svg *ngFor="let i of [1,2,3,4,5,6,7,8]"><use href="#flower" /></svg></div>
+
+    <div class="hero-inner">
+      <p class="telugu big">శ్రీరస్తు శుభమస్తు</p>
+      <p class="blessing">With the blessings of our elders &amp; the grace of the Divine</p>
+      <svg class="divider"><use href="#divider" /></svg>
+
+      <h1 class="names">
+        <span class="n">{{ cfg.groom }}</span>
+        <span class="amp">&amp;</span>
+        <span class="n">{{ cfg.bride }}</span>
+      </h1>
+
+      <p class="tagline">Two souls, one sacred journey</p>
+      <div class="date-badge">
+        <span class="dow">{{ weddingDate | date:'EEEE' }}</span>
+        <span class="dmy">{{ weddingDate | date:'d MMMM y' }}</span>
+        <span class="tm">Muhurtham · {{ weddingDate | date:'h:mm a' }}</span>
+      </div>
+      <a class="scroll-hint" href="#countdown" aria-label="Scroll down">&#8964;</a>
+    </div>
+  </section>
+
+  <!-- Welcome message -->
+  <section class="welcome-sec reveal">
+    <svg class="sec-flower"><use href="#flower" /></svg>
+    <h2>Welcome to Our Wedding</h2>
+    <p>
+      With hearts full of joy and gratitude, we invite you to share in the most beautiful day of our lives.
+      Your presence and blessings will make our celebration complete.
+    </p>
+    <p class="verse">&ldquo;Where there is love, there is life.&rdquo;</p>
+  </section>
+
+  <!-- Countdown -->
+  <section class="countdown-sec reveal" id="countdown">
+    <h2>Counting Down to Our Big Day</h2>
+    <svg class="divider light"><use href="#divider" /></svg>
+
+    <div class="count-grid" *ngIf="!started">
+      <div class="cbox"><b>{{ days }}</b><span>Days</span></div>
+      <div class="cbox"><b>{{ pad(hours) }}</b><span>Hours</span></div>
+      <div class="cbox"><b>{{ pad(minutes) }}</b><span>Minutes</span></div>
+      <div class="cbox"><b>{{ pad(seconds) }}</b><span>Seconds</span></div>
+    </div>
+    <p class="started" *ngIf="started">The celebrations have begun! &#10048;</p>
+  </section>
+
+  <!-- Venue -->
+  <section class="venue-sec reveal" id="venue">
+    <h2>The Venue</h2>
+    <svg class="divider"><use href="#divider" /></svg>
+
+    <div class="venue-card">
+      <h3>{{ cfg.venueName }}</h3>
+      <p class="addr">
+        <ng-container *ngFor="let l of cfg.addressLines">{{ l }}<br /></ng-container>
+      </p>
+
+      <div class="map-wrap">
+        <iframe [src]="mapUrl" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+                title="Wedding venue map" allowfullscreen></iframe>
+      </div>
+
+      <div class="btn-row">
+        <a class="btn gold" [href]="directionsUrl" target="_blank" rel="noopener">&#128205; Get Directions</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Calendar -->
+  <section class="cal-sec reveal">
+    <h2>A Date to Remember</h2>
+    <svg class="divider light"><use href="#divider" /></svg>
+    <p>{{ weddingDate | date:'EEEE, d MMMM y · h:mm a' }}</p>
+    <div class="btn-row">
+      <a class="btn light" [href]="googleCalUrl" target="_blank" rel="noopener">Google Calendar</a>
+      <button class="btn light" type="button" (click)="downloadIcs()">Apple / Outlook (.ics)</button>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="reveal">
+    <svg class="sec-flower"><use href="#flower" /></svg>
+    <p class="telugu">శుభం భూయాత్</p>
+    <p class="thanks">We look forward to celebrating with you</p>
+    <p class="with">With love,</p>
+    <p class="fam">{{ cfg.groom }} &amp; {{ cfg.bride }} and Families</p>
+  </footer>
+</main>
