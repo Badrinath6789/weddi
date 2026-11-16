@@ -5,20 +5,27 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
    EDIT THESE DETAILS  (date, venue and address are placeholders)
 ------------------------------------------------------------------- */
 const CONFIG = {
-  groom: 'SaiShashank',
+  groom: 'Saishashank',
   bride: 'Kavya',
   // ISO date with India time zone (+05:30). Change to the real muhurtham time.
   weddingDateISO: '2026-11-25T10:14:00+05:30',
   durationHours: 5,
   venueName: 'Sri Gardens',
-  addressLines: ['Medchal,Secundrabad'],
+  addressLines: ['Medchal', 'Secundrabad'],
   // Used for the map + directions. Full address text works; lat,lng also works.
-  mapQuery: 'Sri Gardens, Medchal, Secundrabad',
+  mapQuery: 'Sri Gardens, Secundrabad',
   eventTitle: 'Wedding of Saishashank & Kavya',
-  eventDescription: 'With the blessings of elders, we invite you to the wedding of Saishashank & Kavya.'
+  eventDescription: 'With the blessings of elders, we invite you to the wedding of Saishashank & Kavya.',
+  // Door theme shown first: 1 = Royal Palace, 2 = Floral Garden, 3 = Traditional Heritage
+  defaultTheme: 1
 };
 
+export type ThemeId = 1 | 2 | 3;
+
+interface ThemeInfo { id: ThemeId; short: string; full: string; icon: string; }
 interface Petal { left: number; size: number; delay: number; dur: number; sway: number; hue: number; }
+interface Deco { x: number; y: number; s: number; c: number; r: number; }
+interface Burst { dx: number; dy: number; s: number; c: number; d: number; r: number; }
 
 @Component({
   selector: 'app-root',
@@ -30,6 +37,39 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   cfg = CONFIG;
   weddingDate = new Date(CONFIG.weddingDateISO);
+
+  /* ---------- door themes ---------- */
+  themes: ThemeInfo[] = [
+    { id: 1, short: 'Royal',    full: '',icon: '\u265B' },
+    { id: 2, short: 'Floral',   full: '',icon: '\u2740' },
+    { id: 3, short: 'Heritage', full: '',icon: '\u2738' }
+  ];
+  theme: ThemeId = CONFIG.defaultTheme as ThemeId;
+  switching = false;
+
+  /** flowers / leaves that cover each door in the Floral Garden theme (x in px from outer edge, y in % of height) */
+  flowerDeco: Deco[] = [
+    { x: -20, y: -3,  s: 96,  c: 0, r: 10 },
+    { x: 34,  y: 3,   s: 54,  c: 1, r: -15 },
+    { x: -28, y: 24,  s: 76,  c: 1, r: -20 },
+    { x: 26,  y: 40,  s: 46,  c: 2, r: 25 },
+    { x: -16, y: 52,  s: 90,  c: 2, r: 30 },
+    { x: 30,  y: 70,  s: 52,  c: 0, r: -10 },
+    { x: -22, y: 80,  s: 108, c: 0, r: -10 },
+    { x: 40,  y: 90,  s: 64,  c: 1, r: 20 }
+  ];
+  leafDeco: Deco[] = [
+    { x: 4,   y: 12,  s: 70, c: 0, r: 40 },
+    { x: 46,  y: 18,  s: 56, c: 1, r: -35 },
+    { x: -6,  y: 38,  s: 74, c: 1, r: -55 },
+    { x: 44,  y: 54,  s: 60, c: 0, r: 50 },
+    { x: 6,   y: 66,  s: 72, c: 0, r: 25 },
+    { x: 48,  y: 82,  s: 58, c: 1, r: -40 }
+  ];
+  /** hanging mango-leaf & marigold toran (Heritage theme) */
+  toranItems = Array.from({ length: 9 }, (_, i) => i);
+  /** petals that burst out when the Floral Garden doors open */
+  burst: Burst[] = [];
 
   opened = false;      // gate clicked
   gateGone = false;    // gate removed from DOM after animation
@@ -49,10 +89,14 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(private san: DomSanitizer, private zone: NgZone, private host: ElementRef<HTMLElement>) {}
 
+  get currentTheme(): ThemeInfo {
+    return this.themes.find(t => t.id === this.theme) || this.themes[0];
+  }
+
   ngOnInit(): void {
     const q = encodeURIComponent(CONFIG.mapQuery);
     this.mapUrl = this.san.bypassSecurityTrustResourceUrl(`https://www.google.com/maps?q=${q}&output=embed`);
-    this.directionsUrl = `https://maps.app.goo.gl/WzFa8iUH2VPwZvQ6A`;
+    this.directionsUrl = `https://maps.app.goo.gl/ojq8tHiEHh1auKTd8?g_st=aw`;
 
     const start = this.weddingDate;
     const end = new Date(start.getTime() + CONFIG.durationHours * 3600 * 1000);
@@ -72,6 +116,19 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       sway: 20 + Math.random() * 50,
       hue: Math.floor(Math.random() * 3)
     }));
+
+    this.burst = Array.from({ length: 26 }, (_, i) => {
+      const ang = (i / 26) * Math.PI * 2 + Math.random() * 0.4;
+      const dist = 38 + Math.random() * 55; // vw-ish distance
+      return {
+        dx: Math.round(Math.cos(ang) * dist),
+        dy: Math.round(Math.sin(ang) * dist * 1.1),
+        s: 16 + Math.random() * 22,
+        c: Math.floor(Math.random() * 3),
+        d: Math.random() * 0.35,
+        r: Math.round(Math.random() * 540 - 270)
+      };
+    });
 
     this.tick();
     // run the clock outside Angular's zone, update only when value changes
@@ -111,10 +168,21 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   pad(n: number): string { return n < 10 ? '0' + n : '' + n; }
 
+  /** Switch the opening-door theme (only before the invitation is opened) */
+  setTheme(id: ThemeId): void {
+    if (this.opened || id === this.theme || this.switching) { return; }
+    this.switching = true;                       // quick fade-out
+    setTimeout(() => {
+      this.theme = id;                           // swap while hidden
+      setTimeout(() => (this.switching = false), 30); // fade-in
+    }, 230);
+  }
+
   enter(): void {
+    if (this.opened) { return; }
     this.opened = true;
     this.playMusic();
-    setTimeout(() => (this.gateGone = true), 2400);
+    setTimeout(() => (this.gateGone = true), 3000);
   }
 
   playMusic(): void {

@@ -38,6 +38,11 @@
         </g>
       </g>
     </symbol>
+    <!-- Leaf -->
+    <symbol id="leaf" viewBox="0 0 40 100">
+      <path d="M20 2 C 38 30 38 70 20 98 C 2 70 2 30 20 2Z" fill="currentColor" />
+      <path d="M20 10 V92" stroke="rgba(255,255,255,.35)" stroke-width="1.5" fill="none" />
+    </symbol>
     <!-- Divider -->
     <symbol id="divider" viewBox="0 0 300 30">
       <g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
@@ -51,11 +56,11 @@
 
 <!-- Background music -->
 <audio #music loop preload="auto" (error)="onMusicError()">
-  <source src="assets/wedding-music.mp3" type="audio/mpeg" />
+  <source src="assets/music/wedding-music1.mp3" type="audio/mpeg" />
 </audio>
 
 <!-- Falling petals (always on) -->
-<div class="petals" aria-hidden="true">
+<div class="petals" [ngClass]="'t' + theme" aria-hidden="true">
   <svg *ngFor="let p of petals" class="petal" [ngClass]="'h' + p.hue"
        [style.left.%]="p.left" [style.width.px]="p.size" [style.height.px]="p.size"
        [style.animationDelay.s]="p.delay" [style.animationDuration.s]="p.dur" [style.--sway]="p.sway + 'px'">
@@ -64,17 +69,57 @@
 </div>
 
 <!-- Music control -->
-<button class="music-btn" *ngIf="opened" (click)="toggleMusic()" [class.on]="playing"
-        [attr.aria-label]="playing ? 'Pause music' : 'Play music'" [title]="musicMissing ? 'Add assets/wedding-music.mp3' : ''">
+<button class="music-btn" [ngClass]="'t' + theme" *ngIf="opened" (click)="toggleMusic()" [class.on]="playing"
+        [attr.aria-label]="playing ? 'Pause music' : 'Play music'" [title]="musicMissing ? 'Add assets/music/wedding-music1.mp3' : ''">
   <span *ngIf="!playing">&#9654;</span>
   <span *ngIf="playing">&#10074;&#10074;</span>
   <i class="ring"></i>
 </button>
 
 <!-- ============ GRAND WELCOME GATE ============ -->
-<div class="gate" *ngIf="!gateGone" [class.open]="opened">
-  <div class="door left"></div>
-  <div class="door right"></div>
+<div class="gate" *ngIf="!gateGone" [ngClass]="'t' + theme" [class.open]="opened" [class.switching]="switching">
+
+  <!-- Theme switcher (top centre) -->
+  <div class="theme-switch" role="tablist" aria-label="Choose opening door theme">
+    <div class="pills">
+      <button *ngFor="let t of themes" type="button" role="tab" class="pill"
+              [class.active]="theme === t.id" [attr.aria-selected]="theme === t.id"
+              [attr.aria-label]="t.full" [title]="t.full" (click)="setTheme(t.id)">
+        <span class="ic">{{ t.icon }}</span><span class="lb">{{ t.short }}</span>
+      </button>
+    </div>
+    <p class="theme-name">{{ currentTheme.full }}</p>
+  </div>
+
+  <!-- Left door -->
+  <div class="door left">
+    <div class="deco" aria-hidden="true">
+      <svg *ngFor="let l of leafDeco" class="lf" [ngClass]="'g' + l.c"
+           [style.--x]="l.x + 'px'" [style.--y]="l.y + '%'" [style.--s]="l.s + 'px'" [style.--r]="l.r + 'deg'"><use href="#leaf" /></svg>
+      <svg *ngFor="let f of flowerDeco" class="fl" [ngClass]="'c' + f.c"
+           [style.--x]="f.x + 'px'" [style.--y]="f.y + '%'" [style.--s]="f.s + 'px'" [style.--r]="f.r + 'deg'"><use href="#flower" /></svg>
+    </div>
+    <i class="handle"></i>
+  </div>
+
+  <!-- Right door -->
+  <div class="door right">
+    <div class="deco" aria-hidden="true">
+      <svg *ngFor="let l of leafDeco" class="lf" [ngClass]="'g' + l.c"
+           [style.--x]="l.x + 'px'" [style.--y]="l.y + '%'" [style.--s]="l.s + 'px'" [style.--r]="(0 - l.r) + 'deg'"><use href="#leaf" /></svg>
+      <svg *ngFor="let f of flowerDeco" class="fl" [ngClass]="'c' + f.c"
+           [style.--x]="f.x + 'px'" [style.--y]="f.y + '%'" [style.--s]="f.s + 'px'" [style.--r]="(0 - f.r) + 'deg'"><use href="#flower" /></svg>
+    </div>
+    <i class="handle"></i>
+  </div>
+
+  <!-- Toran (Heritage theme only) -->
+  <div class="toran" aria-hidden="true">
+    <span *ngFor="let i of toranItems" class="tu" [style.--d]="(i * 0.25) + 's'">
+      <svg class="tl"><use href="#leaf" /></svg>
+      <svg class="tf"><use href="#flower" /></svg>
+    </span>
+  </div>
 
   <div class="gate-content">
     <svg class="gate-mandala"><use href="#mandala" /></svg>
@@ -100,12 +145,41 @@
   </div>
 </div>
 
+<!-- Petal burst when Floral Garden doors open -->
+<div class="burst" *ngIf="opened && !gateGone && theme === 2" aria-hidden="true">
+  <svg *ngFor="let b of burst" class="bp" [ngClass]="'c' + b.c"
+       [style.--dx]="b.dx + 'vw'" [style.--dy]="b.dy + 'vh'" [style.--r]="b.r + 'deg'"
+       [style.width.px]="b.s" [style.height.px]="b.s" [style.animationDelay.s]="0.5 + b.d"><use href="#flower" /></svg>
+</div>
+
 <!-- ============ INVITATION ============ -->
-<main class="invite" [class.visible]="opened">
+<main class="invite" [ngClass]="'t' + theme" [class.visible]="opened">
 
   <!-- Hero -->
   <section class="hero">
     <svg class="hero-mandala"><use href="#mandala" /></svg>
+
+    <!-- Floral Garden: flowers & leaves around the hero -->
+    <div class="flora" aria-hidden="true">
+      <svg class="fx fx1"><use href="#flower" /></svg>
+      <svg class="fx fx2"><use href="#flower" /></svg>
+      <svg class="fx fx3"><use href="#flower" /></svg>
+      <svg class="fx fx4"><use href="#flower" /></svg>
+      <svg class="fx fx5"><use href="#flower" /></svg>
+      <svg class="fx fx6"><use href="#flower" /></svg>
+      <svg class="lx lx1"><use href="#leaf" /></svg>
+      <svg class="lx lx2"><use href="#leaf" /></svg>
+      <svg class="lx lx3"><use href="#leaf" /></svg>
+      <svg class="lx lx4"><use href="#leaf" /></svg>
+    </div>
+
+    <!-- Heritage: hanging mango-leaf & marigold toran -->
+    <div class="hero-toran" aria-hidden="true">
+      <span *ngFor="let i of toranItems" class="tu" [style.--d]="(i * 0.25) + 's'">
+        <svg class="tl"><use href="#leaf" /></svg>
+        <svg class="tf"><use href="#flower" /></svg>
+      </span>
+    </div>
     <div class="garland"><svg *ngFor="let i of [1,2,3,4,5,6,7,8]"><use href="#flower" /></svg></div>
 
     <div class="hero-inner">
@@ -178,7 +252,7 @@
 
   <!-- Calendar -->
   <section class="cal-sec reveal">
-    <h2>A Date to Remember</h2>
+    <h2>Save the Date</h2>
     <svg class="divider light"><use href="#divider" /></svg>
     <p>{{ weddingDate | date:'EEEE, d MMMM y · h:mm a' }}</p>
     <div class="btn-row">
@@ -190,8 +264,12 @@
   <!-- Footer -->
   <footer class="reveal">
     <svg class="sec-flower"><use href="#flower" /></svg>
-    <p class="telugu">శుభం భూయాత్</p>
-    <p class="thanks">We look forward to celebrating with you</p>
+    <h2 class="thanks-title">Thank You</h2>
+    <svg class="divider"><use href="#divider" /></svg>
+    <p class="thanks">
+      It is the greatest honor to have you as part of our story. May your life be filled with love, light,
+      and lasting joy. We can't wait to celebrate with you!
+    </p>
     <p class="with">With love,</p>
     <p class="fam">{{ cfg.groom }} &amp; {{ cfg.bride }} and Families</p>
   </footer>
