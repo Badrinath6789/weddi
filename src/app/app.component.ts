@@ -11,9 +11,14 @@ const CONFIG = {
   weddingDateISO: '2026-11-25T10:14:00+05:30',
   durationHours: 5,
   venueName: 'Sri Gardens',
-  addressLines: ['Medchal', 'Secundrabad'],
-  // Used for the map + directions. Full address text works; lat,lng also works.
-  mapQuery: 'Sri Gardens, Secundrabad',
+  addressLines: ['Medchal', 'Secunderabad'],
+  // EXACT pin for the embedded map (and its "Open in Maps" link). A plain name search shows lookalike
+  // venues, so use the plus code of the correct place, or its coordinates like '17.5123,78.4567'.
+  mapPin: 'JFPR+34R Medchal, Telangana',
+  // Fallback text search, only used if mapPin is ''.
+  mapQuery: 'Sri Gardens, Medchal, Secunderabad',
+  // Get Directions button: your Google Maps share link of the correct place.
+  directionsLink: 'https://maps.app.goo.gl/ojq8tHiEHh1auKTd8?g_st=aw',
   eventTitle: 'Wedding of Saishashank & Kavya',
   eventDescription: 'With the blessings of elders, we invite you to the wedding of Saishashank & Kavya.',
   liveUrl: 'https://www.youtube.com/live/qPUT0mh-_IE',
@@ -96,9 +101,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    const q = encodeURIComponent(CONFIG.mapQuery);
+    const q = encodeURIComponent(CONFIG.mapPin || CONFIG.mapQuery);
     this.mapUrl = this.san.bypassSecurityTrustResourceUrl(`https://www.google.com/maps?q=${q}&output=embed`);
-    this.directionsUrl = `https://maps.app.goo.gl/ojq8tHiEHh1auKTd8?g_st=aw`;
+    this.directionsUrl = CONFIG.directionsLink || `https://www.google.com/maps/dir/?api=1&destination=${q}`;
 
     const start = this.weddingDate;
     const end = new Date(start.getTime() + CONFIG.durationHours * 3600 * 1000);
