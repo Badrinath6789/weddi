@@ -16,6 +16,8 @@ const CONFIG = {
   mapQuery: 'Sri Gardens, Secundrabad',
   eventTitle: 'Wedding of Saishashank & Kavya',
   eventDescription: 'With the blessings of elders, we invite you to the wedding of Saishashank & Kavya.',
+  liveUrl: 'https://www.youtube.com/live/qPUT0mh-_IE',
+  liveNote: 'Can\'t join us in person? Watch the muhurtham live from wherever you are.',
   // Door theme shown first: 1 = Royal Palace, 2 = Floral Garden, 3 = Traditional Heritage
   defaultTheme: 1
 };

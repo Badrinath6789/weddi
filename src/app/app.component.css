@@ -442,6 +442,39 @@ section { padding: 56px 20px; text-align: center; }
 .map-wrap { border-radius: 12px; overflow: hidden; border: 1.5px solid var(--i-card-border); aspect-ratio: 4 / 3; max-height: 340px; width: 100%; }
 .map-wrap iframe { width: 100%; height: 100%; border: 0; display: block; }
 
+/* live stream – highlighted */
+.live-chip {
+  display: inline-flex; align-items: center; gap: 8px; margin-top: 16px; padding: 10px 20px; min-height: 44px;
+  border-radius: 40px; background: #d62839; color: #fff; text-decoration: none;
+  font: 700 .95rem 'Cormorant Garamond', serif; letter-spacing: 1.5px; text-transform: uppercase;
+  box-shadow: 0 0 0 0 rgba(214,40,57,.6); animation: livePulse 2s infinite;
+}
+.live-chip + .scroll-hint { margin-top: 10px; }
+.dot { width: 10px; height: 10px; border-radius: 50%; background: #fff; display: inline-block; animation: blink 1.2s ease-in-out infinite; }
+@keyframes livePulse { 70% { box-shadow: 0 0 0 14px rgba(214,40,57,0); } 100% { box-shadow: 0 0 0 0 rgba(214,40,57,0); } }
+@keyframes blink { 50% { opacity: .25; } }
+
+.live-sec { padding-top: 40px; padding-bottom: 40px; }
+.live-card {
+  position: relative; max-width: 640px; margin: 0 auto; padding: 38px 18px 30px; border-radius: 20px;
+  background: var(--i-dark); color: var(--i-dark-text);
+  border: 2px solid var(--i-dark-acc);
+  box-shadow: 0 0 0 6px rgba(214,40,57,.12), 0 14px 38px rgba(0,0,0,.3);
+  animation: liveGlow 3s ease-in-out infinite alternate;
+}
+@keyframes liveGlow { to { box-shadow: 0 0 0 10px rgba(214,40,57,.2), 0 14px 44px rgba(214,40,57,.35); } }
+.live-badge {
+  position: absolute; top: -16px; left: 50%; transform: translateX(-50%);
+  display: inline-flex; align-items: center; gap: 8px; padding: 6px 18px; border-radius: 30px;
+  background: #d62839; color: #fff; font: 700 .95rem 'Cormorant Garamond', serif; letter-spacing: 3px;
+  box-shadow: 0 4px 12px rgba(214,40,57,.5);
+}
+.live-card h2 { color: var(--i-num); }
+.live-when { font-size: clamp(1.1rem, 4.4vw, 1.35rem); margin: 4px 0 0; color: var(--i-dark-acc); font-weight: 600; }
+.live-note { font-style: italic; font-size: clamp(1.05rem, 4.2vw, 1.25rem); line-height: 1.6; margin: 10px auto 0; max-width: 460px; }
+.live-btn { margin-top: 20px; background: #d62839; border-color: #fff; color: #fff; box-shadow: 0 6px 18px rgba(214,40,57,.5); }
+.live-btn:hover { background: #b81f2f; }
+
 .cal-sec { background: var(--i-dark2); color: var(--i-dark-text); }
 .cal-sec p { font-size: clamp(1.1rem, 4.4vw, 1.4rem); margin: 8px 0 0; }
 .t3 .countdown-sec, .t3 .cal-sec { border-top: 6px solid #c08a1f; border-bottom: 6px solid #c08a1f; }
